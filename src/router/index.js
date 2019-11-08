@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Home from '../views/Home.vue'
+import neo4jcomponent from '../views/Neo4j'
 
 Vue.use(VueRouter)
 
@@ -8,15 +9,32 @@ const routes = [
   {
     path: '/',
     name: 'home',
-    component: Home
+    component: Home,
+    beforeEnter(to, from, next) {
+      // check vuex store //
+      if (localStorage.getItem("neo4jsession") == null) {
+        next()
+      } else {
+        next({
+          name: "neo4j" // back to safety route //
+        });
+      }
+    }
   },
   {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
+    path: '/neo4j',
+    name: 'neo4j',
+    component: neo4jcomponent,
+    beforeEnter(to, from, next) {
+      // check vuex store //
+      if (localStorage.getItem("neo4jsession")) {
+        next()
+      } else {
+        next({
+          name: "home" // back to safety route //
+        });
+      }
+    }
   }
 ]
 
